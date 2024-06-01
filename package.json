@@ -1,0 +1,22 @@
+{
+  "name": "aquacatch",
+  "version": "1.0.0",
+  "description": "Discord bot for the AquaCatch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js",
+    "commands": "node src/deploy-commands.js",
+    "start": "pm2 start src/index.js --name 'AquaCatch Discord Bot' --watch --ignore-watch='node_modules'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.4.1",
+    "nodemon": "^3.1.2",
+    "pm2": "^5.4.0"
+  }
+}
