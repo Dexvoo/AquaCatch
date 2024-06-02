@@ -1,12 +1,5 @@
-const {
-	SlashCommandBuilder,
-	EmbedBuilder,
-	CommandInteraction,
-} = require('discord.js');
-
-const {
-	DeveloperIDs,
-} = process.env;
+const { SlashCommandBuilder, EmbedBuilder, CommandInteraction } = require('discord.js');
+const { DeveloperIDs } = process.env;
 require('dotenv').config();
 
 module.exports = {
@@ -20,14 +13,11 @@ module.exports = {
 	/**
 	 * @param {CommandInteraction} interaction
 	 */
+	
 	async execute(interaction) {
 		try {
 			const { guild, member, options, client, channel } = interaction;
 			
-
-			console.log(DeveloperIDs);
-			console.log(member.id);
-			console.log(DeveloperIDs.includes(member.id));
 			if (!DeveloperIDs.includes(member.id)) {
 				const embed = new EmbedBuilder()
 					.setTitle('Error')
