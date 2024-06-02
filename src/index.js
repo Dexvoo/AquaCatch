@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Events, EmbedBuilder } = require('discord.js');
 require('dotenv').config();
 const { cleanConsoleLogData, cleanConsoleLog } = require('./utils/ConsoleLogs');
 const { Token } = process.env;
@@ -32,6 +32,7 @@ const client = new Client({
 
 
 client.commands = new Collection();
+client.cooldowns = new Collection();
 
 const init = async () => {
 	let commandsDirectory = path.join(__dirname, 'commands');
@@ -53,7 +54,79 @@ cleanConsoleLogData('Created by: @Dexvo and @lcsmith', ' ');
 init();
 
 
+// Cooldowns
 
+client.on('interactionCreate', async (interaction) => {
+	if (!interaction.isCommand()) return;
+
+	const command = client.commands.get(interaction.commandName);
+
+	if (!command) return;
+
+	// Get cooldowns from client
+	const { cooldowns } = client;
+
+	// Check if the command has a cooldown
+	if (!cooldowns.has(command.data.name)) {
+		cooldowns.set(command.data.name, new Collection());
+	}
+
+	// Variables
+	const now = Date.now();
+	const timestamps = cooldowns.get(command.data.name);
+	const defaultCooldown = 5;
+	const cooldownAmount = (command.cooldown || defaultCooldown) * 1000;
+
+	// Check if the user is on cooldown
+	if (timestamps.has(interaction.user.id)) {
+		const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+
+		if (now < expirationTime) {
+			const expiredTimestamp = Math.round(expirationTime / 1000);
+			const CooldownEmbed = new EmbedBuilder()
+				.setTitle('Command Cooldown')
+				.setDescription('You are on cooldown!')
+				.addFields(
+					{
+						name: 'Command',
+						value: `\`/${command.data.name}\``,
+						inline: true,
+					},
+					{
+						name: 'Cooldown Ends',
+						value: `<t:${expiredTimestamp}:R>`,
+					}
+				);
+			const cooldownMessage = await interaction.reply({
+				embeds: [CooldownEmbed],
+				ephemeral: true,
+			});
+			return setTimeout(() => cooldownMessage.delete(), cooldownAmount - 2000);
+		}
+	}
+
+	// Set the cooldown
+	timestamps.set(interaction.user.id, now);
+	setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		if (interaction.replied || interaction.deferred) {
+			const Embed = new EmbedBuilder()
+				.setColor('Red')
+				.setDescription('There was an error while executing this command!')
+			await interaction.followUp({ embeds: [Embed] });
+		} else {
+			const Embed = new EmbedBuilder()
+				.setColor('Red')
+				.setDescription('There was an error while executing this command!')
+			await interaction.reply({ embeds: [Embed] });
+		
+		}
+	}
+});
 
 
 
