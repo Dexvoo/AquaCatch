@@ -15,6 +15,7 @@ module.exports = {
      */
 
     async execute(interaction) {
+        if (!interaction.isCommand()) return;
 
         const { guild, user, commandName } = interaction;
         const Channel = guild.channels.cache.get(CommandLoggingChannelID);

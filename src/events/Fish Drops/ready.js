@@ -61,7 +61,7 @@ module.exports = {
                 .setColor('Random');
 
             GuildChannel.send({ embeds: [Embed], components: [row] }).then((msg) => {
-                // Button Collector , 5 mins timeout
+
                 const filter = (button) => button.customId === `catch.${guild.id}`;
                 const collector = GuildChannel.createMessageComponentCollector({ filter, time: 300000 });
 
@@ -97,7 +97,8 @@ module.exports = {
 					const ExpiredButton = new ButtonBuilder()
 						.setStyle(ButtonStyle.Danger)
 						.setLabel('Expired')
-						.setDisabled(true);
+						.setDisabled(true)
+						.setCustomId(`expired`);
 
 					const ExpiredRow = new ActionRowBuilder().addComponents(ExpiredButton);
 
