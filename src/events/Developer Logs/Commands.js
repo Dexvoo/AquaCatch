@@ -32,7 +32,7 @@ module.exports = {
 
             const Embed = new EmbedBuilder()
                 .setTitle(`Command Executed | Shard #${client.shard.ids}`)
-                .setColor(Colors.Blurple)
+                .setColor(Colors.Aqua)
                 .addFields({ name: 'User', value: `@${user.username} (${user.id})`, inline: true })
                 .setTimestamp();
 

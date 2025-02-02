@@ -1,0 +1,18 @@
+{
+	"script": "src/index.js",
+	"watch": true,
+	"env": {
+		"NODE_ENV": "Production"
+	  },
+	"ignore_watch": [
+		"node_modules",
+		"package.json",
+		"package-lock.json",
+		".git",
+		"Workspace"
+	],
+	"watch_options": {
+		"followSymlinks": false
+	},
+	"name": "Aqua Catch"
+}
