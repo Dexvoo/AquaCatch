@@ -6,6 +6,7 @@ const { DevGuildID, CommandLogCID } = process.env;
 
 
 
+module.exports = {
     name: Events.InteractionCreate,
     once: false,
     nickname: 'Command Logs',
