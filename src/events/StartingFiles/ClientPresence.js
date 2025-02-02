@@ -10,8 +10,8 @@ module.exports = {
 	 */
 
 	async execute(client) {
-		client.user.setActivity(`Ovx! #${client.shard.ids}`, {
-			type: ActivityType.Watching,
+		client.user.setActivity(`AquaCatch! #${client.shard.ids}`, {
+			type: ActivityType.Playing,
 		});
 	}
 };
