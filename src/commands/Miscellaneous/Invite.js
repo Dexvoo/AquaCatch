@@ -19,6 +19,8 @@ module.exports = {
 
     async execute(interaction) {
         const { client } = interaction;
+
+        await interaction.deferReply();
         
         const buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -36,6 +38,6 @@ module.exports = {
             .setColor(Colors.Aqua)
             .setDescription('Need help? Join our support server! User installs and Guild installs are available.');
 
-        await interaction.reply({ embeds: [inviteEmbed], components: [buttons] });
+        await interaction.editReply({ embeds: [inviteEmbed], components: [buttons] });
     }
 };

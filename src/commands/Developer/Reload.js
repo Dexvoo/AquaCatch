@@ -14,6 +14,7 @@ module.exports = {
         .setDescription('(Developer) Reloads a command')
         .setIntegrationTypes( [ApplicationIntegrationType.GuildInstall] )
         .setContexts( InteractionContextType.Guild )
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         
         .addStringOption(option =>
             option.setName('command')
@@ -43,24 +44,27 @@ module.exports = {
     */
 
     async execute(interaction) {
-        const { options } = interaction;
+        const { options, client, user } = interaction;
 
+        await interaction.deferReply();
+
+        if(!DeveloperIDs.includes(user.id)) {
+            const Embed = new EmbedBuilder()
+                .setColor(Colors.Red)
+                .setDescription('You do not have permission to use this command');
+            return interaction.editReply({ embeds: [Embed] });
+        }
+        
         const commandName = options.getString('command').toLowerCase();
-        const command = interaction.client.commands.get(commandName);
+        const command = client.commands.get(commandName);
 
         if(!command) {
             const Embed = new EmbedBuilder()
                 .setColor(Colors.Red)
                 .setDescription(`There is no command with the name \`${commandName}\``);
-            return interaction.reply({ embeds: [Embed] });
+            return interaction.editReply({ embeds: [Embed] });
         }
 
-        if(!DeveloperIDs.includes(interaction.user.id)) {
-            const Embed = new EmbedBuilder()
-                .setColor(Colors.Red)
-                .setDescription('You do not have permission to use this command');
-            return interaction.reply({ embeds: [Embed] });
-        }
 
         const commandPath = path.join(__dirname, '..', '..', 'commands');
         const url = await crawlDirectory(commandPath, commandName);
@@ -69,29 +73,28 @@ module.exports = {
             const Embed = new EmbedBuilder()
                 .setColor(Colors.Red)
                 .setDescription(`Failed to find command file for \`${commandName}\``);
-            return interaction.reply({ embeds: [Embed] });
+            return interaction.editReply({ embeds: [Embed] });
         }
 
         delete require.cache[require.resolve(url)];
 
         try {
             const newCommand = require(url);
-            interaction.client.commands.set(newCommand.data.name, newCommand);
+            client.commands.set(newCommand.data.name, newCommand);
             const Embed = new EmbedBuilder()
                 .setColor(Colors.Green)
                 .setDescription(`Successfully reloaded \`${commandName}\``);
-            return interaction.reply({ embeds: [Embed] });
+            return interaction.editReply({ embeds: [Embed] });
         } catch (error) {
             console.log(error);
             const Embed = new EmbedBuilder()
                 .setColor(Colors.Red)
                 .setDescription(`Failed to reload \`${commandName}\``);
-            return interaction.reply({ embeds: [Embed] });
+            return interaction.editReply({ embeds: [Embed] });
         }
         
     }
 };
-
 
 async function crawlDirectory(currentDirectory, targetCommandName) {
     const allDirectories = await fsPromises.readdir(currentDirectory, { withFileTypes: true });
