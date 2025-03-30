@@ -1,53 +1,94 @@
-const { Events, Client, CommandInteraction, EmbedBuilder, Colors } = require('discord.js');
+const { Events, Client, EmbedBuilder, Colors } = require('discord.js');
 const { consoleLogData } = require('../../utils/LoggingData.js');
 require('dotenv').config();
 
-const { DevGuildID, CommandLogCID } = process.env;
+const { GuildSettings, ActiveFish, FishCatalog } = require('../../models/UserSetups.js');
+
+const {  } = process.env;
 
 
 
 module.exports = {
-    name: Events.InteractionCreate,
+    name: Events.ClientReady,
     once: false,
     nickname: 'Command Logs',
 
     /**
-     * @param {CommandInteraction} interaction - Discord Client
-     */
-    async execute(interaction) {
-        if (!interaction.isCommand()) return;
+	 * @param {Client} client - Discord Client
+	 */
+    async execute(client) {
+        const {  } = client;
 
-        const { client, guild, user, channel } = interaction;
+        async function SpawnFish() {
+            const guilds = await GuildSettings.find({ enabled: true });
 
-        try {
-            const devGuild = client.guilds.cache.get(DevGuildID) || await client.guilds.fetch(DevGuildID);
-            if (!devGuild) {
-                return consoleLogData('Command Logs', 'Guild not found', 'error');
-            }
+            if (!guilds || guilds.length === 0) return;
 
-            const devChannel = devGuild.channels.cache.get(CommandLogCID) || await devGuild.channels.fetch(CommandLogCID);
-            if (!devChannel) {
-                return consoleLogData('Command Logs', 'Channel not found', 'error');
-            }
+            for (const guild of guilds) {
+                const { guildId, channelId } = guild;
 
-            const Embed = new EmbedBuilder()
-                .setTitle(`Command Executed | Shard #${client.shard.ids}`)
-                .setColor(Colors.Aqua)
-                .addFields({ name: 'User', value: `@${user.username} (${user.id})`, inline: true })
-                .setTimestamp();
+                const activeFish = await ActiveFish.findOne({ guildId });
 
-            if (guild) {
-                Embed.addFields(
-                    { name: 'Guild', value: `${guild.name} (${guild.id})`, inline: true },
-                    { name: 'Channel', value: `#${channel.name} (${channel.id})`, inline: true }
-                );
-            }
+                if(activeFish) {
+                    const channel = await client.channels.fetch(channelId).catch(() => null);
+                    if (!channel) {
 
-            Embed.addFields({ name: 'Command', value: `\`${interaction.toString().substring(0, 1000)}\``, inline: false });
+                        // disable guild settings if channel not found
+                        await GuildSettings.findOneAndUpdate({ guildId }, { enabled: false });
+                        // dm the owner of the guild
+                        const guildObj = await client.guilds.fetch(guildId).catch(() => null);
+                        if (guildObj) {
+                            const owner = await guildObj.fetchOwner().catch(() => null);
+                            if (owner) {
+                                await owner.send(`The channel for fish spawns in your server has been deleted. The fish spawns have been disabled.`).catch(() => null);
+                            }
+                        }
+                        consoleLogData(`Guild: ${guildId}`, `Channel not found: ${channelId}`, 'error');
+                        continue;
+                    }
 
-            await devChannel.send({ embeds: [Embed] });
-        } catch (error) {
-            consoleLogData('Command Logs', `Failed to send embed: ${error.message}`, 'error');
+                    const message = await channel.messages.fetch(activeFish.messageId).catch(() => null);
+                    if (message) {
+                        // make sure its the last message in the channel
+
+                        if (message.id !== activeFish.messageId) {
+                            // NEED TO SPAWN NEW FISH AND DELETE THE OLD ONE
+                            continue;
+                        }
+                    }
+                    
+                }
+
+
+
+
+
+
+
+             
+
+
+
+
+
+            };
+
         }
     }
 };
+
+
+function TimeDiffToString(diff) {
+    const diffSeconds = Math.floor((diff / 1000) % 60);
+    const diffMinutes = Math.floor((diff / (1000 * 60)) % 60);
+    const diffHours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    let result = '';
+    if (diffDays > 1) result += `${diffDays}d `;
+    if (diffHours > 1) result += `${diffHours}h `;
+    if (diffMinutes > 1) result += `${diffMinutes}m `;
+    result += `${diffSeconds}s`;
+
+    return result.trim();
+}
