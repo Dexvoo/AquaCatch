@@ -35,32 +35,39 @@ module.exports = {
 
         const fishList = [
             // Common
-            { fishId: '001', name: "Anchovy", rarity: "Common", weight: 0.5, price: 10, emoji: "<:Anchovy:1354466956744462389>"},
-            { fishId: '002', name: "Goldfish", rarity: "Common", weight: 0.4, price: 8, emoji: "<:Goldfish:1354468063851843736>"},
-            { fishId: '003', name: "YellowPerch", rarity: "Common", weight: 0.8, price: 15, emoji: "<:YellowPerch:1354468449530679437>"},
-            
+            { fishId: '001', name: "Anchovy", rarity: "Common", weight: 15, price: 10, emoji: "<:Anchovy:1354466956744462389>"},
+            { fishId: '002', name: "Goldfish", rarity: "Common", weight: 14, price: 8, emoji: "<:Goldfish:1354468063851843736>"},
+            { fishId: '003', name: "YellowPerch", rarity: "Common", weight: 13, price: 15, emoji: "<:YellowPerch:1354468449530679437>"},
+        
             // Uncommon
-            { fishId: '004', name: "Bass", rarity: "Uncommon", weight: 1.0, price: 25, emoji: "<:Bass:1354467900882292887>"},
-            { fishId: '005', name: "Clownfish", rarity: "Uncommon", weight: 0.7, price: 18, emoji: "<:Clownfish:1354467321703301283>"},
-            { fishId: '006', name: "RainbowTrout", rarity: "Uncommon", weight: 1.5, price: 35, emoji: "<:RainbowTrout:1354468246551793847>"},
-            { fishId: '007', name: "Salmon", rarity: "Uncommon", weight: 2.0, price: 40, emoji: "<:Salmon:1354468285495906456>"},
-            
+            { fishId: '004', name: "Bass", rarity: "Uncommon", weight: 10, price: 25, emoji: "<:Bass:1354467900882292887>"},
+            { fishId: '005', name: "Clownfish", rarity: "Uncommon", weight: 9, price: 18, emoji: "<:Clownfish:1354467321703301283>"},
+            { fishId: '006', name: "RainbowTrout", rarity: "Uncommon", weight: 8, price: 35, emoji: "<:RainbowTrout:1354468246551793847>"},
+            { fishId: '007', name: "Salmon", rarity: "Uncommon", weight: 7, price: 40, emoji: "<:Salmon:1354468285495906456>"},
+        
             // Rare
-            { fishId: '008', name: "Arowana", rarity: "Rare", weight: 3.0, price: 50, emoji: "<:Arowana:1354467864580591798>"},
-            { fishId: '009', name: "BlueAngelfish", rarity: "Rare", weight: 1.5, price: 45, emoji: "<:BlueAngelfish:1354467202178351266>"},
-            { fishId: '010', name: "CrabKing", rarity: "Rare", weight: 2.5, price: 65, emoji: "<:CrabKing:1354467484190904502>"},
-            
+            { fishId: '008', name: "Arowana", rarity: "Rare", weight: 5, price: 50, emoji: "<:Arowana:1354467864580591798>"},
+            { fishId: '009', name: "BlueAngelfish", rarity: "Rare", weight: 4, price: 45, emoji: "<:BlueAngelfish:1354467202178351266>"},
+            { fishId: '010', name: "CrabKing", rarity: "Rare", weight: 3.5, price: 65, emoji: "<:CrabKing:1354467484190904502>"},
+        
             // Epic
-            { fishId: '011', name: "Anglerfish", rarity: "Epic", weight: 5.0, price: 100, emoji: "<:Anglerfish:1354467019784720454>"},
-            { fishId: '012', name: "GreatWhiteShark", rarity: "Epic", weight: 8.0, price: 150, emoji: "<:GreatWhiteShark:1354467614059008162>"},
-            
+            { fishId: '011', name: "Anglerfish", rarity: "Epic", weight: 2, price: 100, emoji: "<:Anglerfish:1354467019784720454>"},
+            { fishId: '012', name: "GreatWhiteShark", rarity: "Epic", weight: 1.8, price: 150, emoji: "<:GreatWhiteShark:1354467614059008162>"},
+        
             // Legendary
-            { fishId: '013', name: "BlueGroper", rarity: "Legendary", weight: 10.0, price: 250, emoji: "<:BlueGroper:1354467273095778334>"},
-            { fishId: '014', name: "Pearl", rarity: "Legendary", weight: 12.0, price: 200, emoji: "<:Pearl:1354465804694851675>"},
-
+            { fishId: '013', name: "BlueGroper", rarity: "Legendary", weight: 1.2, price: 250, emoji: "<:BlueGroper:1354467273095778334>"},
+            { fishId: '014', name: "Pearl", rarity: "Legendary", weight: 1, price: 200, emoji: "<:Pearl:1354465804694851675>"},
+        
             // Mythic
-            { fishId: '015', name: "Upside Down Jellyfish", rarity: "Mythic", weight: 15.0, price: 400, emoji: "<:UpsideDownJellyfish:1354466866088771675>"}
+            { fishId: '015', name: "Upside Down Jellyfish", rarity: "Mythic", weight: 0.5, price: 400, emoji: "<:UpsideDownJellyfish:1354466866088771675>"}
         ];
+
+        const totalWeight = fishList.reduce((acc, fish) => acc + fish.weight, 0);
+
+        for (const fish of fishList) {
+            fish.percentage = (fish.weight / totalWeight) * 100; // Calculate catch chance based on weight
+        }
+
         
         
         // const fishList = [

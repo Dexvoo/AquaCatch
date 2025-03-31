@@ -2,17 +2,23 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const UserInventory = new Schema({
-    userId: { type: String, required: true, unique: true }, // Discord User ID
+    userId: { type: String, required: true }, // Discord User ID
     guildId: { type: String, required: true }, // Discord Guild ID
 
     fishingRod: { type: String, default: "Basic Rod" }, // Equipped rod
+
     inventory: [
         {
-            itemId: { type: String, required: true }, // Unique ID of the item
-            quantity: { type: Number, default: 1 }, // Amount of this item
+            itemId: { type: String, required: true }, // Unique ID of the fish
+            quantity: { type: Number, default: 1 }, // Amount of this fish
+            type: { type: String, required: true }
         }
-    ]
-});
+    ],
+
+}, { timestamps: true });
+
+// Add an index for efficient lookups
+UserInventory.index({ userId: 1, guildId: 1 }, { unique: true });
 
 const FishCatalog = new Schema({
     fishId: { type: String, required: true, unique: true }, // Unique item ID
@@ -21,6 +27,7 @@ const FishCatalog = new Schema({
     weight: { type: Number, required: true }, // Average weight
     price: { type: Number, required: true }, // Sell price
     emoji: { type: String, required: true }, // Emoji for the fish
+    percentage: { type: Number, required: true }, // Percentage chance to catch this fish
 });
 
 const GuildSettings = new Schema({
