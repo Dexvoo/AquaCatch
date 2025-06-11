@@ -59,7 +59,7 @@ module.exports = {
             { fishId: '014', name: "Pearl", rarity: "Legendary", weight: 1, price: 200, emoji: "<:Pearl:1354465804694851675>"},
         
             // Mythic
-            { fishId: '015', name: "Upside Down Jellyfish", rarity: "Mythic", weight: 0.5, price: 400, emoji: "<:UpsideDownJellyfish:1354466866088771675>"}
+            { fishId: '015', name: "Upside Down Jellyfish", rarity: "Mythic", weight: 0.05, price: 400, emoji: "<:UpsideDownJellyfish:1354466866088771675>"}
         ];
 
         const totalWeight = fishList.reduce((acc, fish) => acc + fish.weight, 0);
@@ -128,7 +128,7 @@ module.exports = {
         //     // worm
         //     // sand dollar
         //     // shrimp
-        //     // seashell
+        //     // seashell 
         // ];
     
         for (const fish of fishList) {

@@ -5,7 +5,12 @@ const UserInventory = new Schema({
     userId: { type: String, required: true }, // Discord User ID
     guildId: { type: String, required: true }, // Discord Guild ID
 
+    dailyStreak: { type: Number, default: 0 }, // Daily streak for rewards
+    lastClaimed: { type: Date, default: null }, // Last claimed date for daily rewards
+
     fishingRod: { type: String, default: "Basic Rod" }, // Equipped rod
+
+    currency: { type: Number, default: 0 }, // Emoji for the currency
 
     inventory: [
         {

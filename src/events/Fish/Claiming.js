@@ -3,6 +3,7 @@ const { consoleLogData } = require('../../utils/LoggingData.js');
 require('dotenv').config();
 const { GuildSettings, ActiveFish, FishCatalog, UserInventory } = require('../../models/UserSetups.js');
 const { addItemToInventory } = require('../../utils/InventoryManager.js')
+const { timeFormatted } = require('../../utils/Time.js');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -13,9 +14,9 @@ module.exports = {
      * @param {Message} message - Discord Client
      */
     async execute(message) {
-        const { content, guild, channel, client, author } = message;
+        const { content, guild, channel, client, author, member } = message;
 
-        if (!/^fish$/i.test(content)) return;
+        if (!/^catch$/i.test(content)) return;
 
         // Fetch active fish data for the guild
 
@@ -60,11 +61,10 @@ module.exports = {
 
 
 
-
-
+        const timeCaught = timeFormatted((Date.now() - activeFishData.spawnTime) / 1000);
 
         // Respond to the user
-        await message.reply(`You have successfully claimed a **${fishDetails.name}**! ${fishDetails.emoji} in **${((Date.now() - activeFishData.spawnTime) / 1000).toFixed(2)}s**`);
+        await message.reply(`**${member.displayName}** have successfully claimed a **${fishDetails.name}**! ${fishDetails.emoji} in **${ timeCaught.formatted}**`);
 
         // Log the claim
         consoleLogData(`Guild: ${guild.id}`, `Fish claimed: ${fishDetails.name} by ${author.username}`, 'success');
